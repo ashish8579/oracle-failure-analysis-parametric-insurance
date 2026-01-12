@@ -1,0 +1,8 @@
+metric,value
+total_trials,180
+false_positive_rate,0.06111111111111111
+false_negative_rate,0.016666666666666666
+accuracy,0.9222222222222223
+false_positives,11
+false_negatives,3
+correct,166
