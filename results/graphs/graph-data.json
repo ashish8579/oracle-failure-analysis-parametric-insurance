@@ -3,7 +3,7 @@
     "single": [
       {
         "probability": 0,
-        "rate": 0
+        "rate": 0.4
       },
       {
         "probability": 0.1,
@@ -11,7 +11,7 @@
       },
       {
         "probability": 0.2,
-        "rate": 0.1
+        "rate": 0
       },
       {
         "probability": 0.3,
@@ -19,43 +19,43 @@
       },
       {
         "probability": 0.4,
-        "rate": 0.1
+        "rate": 0.2
       },
       {
         "probability": 0.5,
-        "rate": 0
+        "rate": 0.1
       }
     ],
     "mean": [
       {
         "probability": 0,
-        "rate": 0.1
-      },
-      {
-        "probability": 0.1,
-        "rate": 0.2
-      },
-      {
-        "probability": 0.2,
-        "rate": 0.1
-      },
-      {
-        "probability": 0.3,
-        "rate": 0.1
-      },
-      {
-        "probability": 0.4,
         "rate": 0
       },
       {
-        "probability": 0.5,
+        "probability": 0.1,
+        "rate": 0.1
+      },
+      {
+        "probability": 0.2,
+        "rate": 0
+      },
+      {
+        "probability": 0.3,
         "rate": 0.2
+      },
+      {
+        "probability": 0.4,
+        "rate": 0.1
+      },
+      {
+        "probability": 0.5,
+        "rate": 0
       }
     ],
     "median": [
       {
         "probability": 0,
-        "rate": 0
+        "rate": 0.3
       },
       {
         "probability": 0.1,
@@ -63,19 +63,19 @@
       },
       {
         "probability": 0.2,
-        "rate": 0.2
+        "rate": 0.1
       },
       {
         "probability": 0.3,
-        "rate": 0
+        "rate": 0.1
       },
       {
         "probability": 0.4,
-        "rate": 0
+        "rate": 0.2
       },
       {
         "probability": 0.5,
-        "rate": 0
+        "rate": 0.1
       }
     ]
   },
@@ -103,7 +103,7 @@
       },
       {
         "probability": 0.5,
-        "rate": 0.1
+        "rate": 0
       }
     ],
     "mean": [
@@ -155,7 +155,7 @@
       },
       {
         "probability": 0.5,
-        "rate": 0.2
+        "rate": 0.1
       }
     ]
   },
@@ -164,15 +164,6 @@
       "failureMode": "F1",
       "aggregationStrategy": "single",
       "trials": 60,
-      "falsePositives": 2,
-      "falseNegatives": 1,
-      "falsePositiveRate": 0.03333333333333333,
-      "falseNegativeRate": 0.016666666666666666
-    },
-    {
-      "failureMode": "F1",
-      "aggregationStrategy": "mean",
-      "trials": 60,
       "falsePositives": 7,
       "falseNegatives": 0,
       "falsePositiveRate": 0.11666666666666667,
@@ -180,12 +171,21 @@
     },
     {
       "failureMode": "F1",
+      "aggregationStrategy": "mean",
+      "trials": 60,
+      "falsePositives": 4,
+      "falseNegatives": 0,
+      "falsePositiveRate": 0.06666666666666667,
+      "falseNegativeRate": 0
+    },
+    {
+      "failureMode": "F1",
       "aggregationStrategy": "median",
       "trials": 60,
-      "falsePositives": 2,
-      "falseNegatives": 2,
-      "falsePositiveRate": 0.03333333333333333,
-      "falseNegativeRate": 0.03333333333333333
+      "falsePositives": 8,
+      "falseNegatives": 1,
+      "falsePositiveRate": 0.13333333333333333,
+      "falseNegativeRate": 0.016666666666666666
     }
   ]
 }

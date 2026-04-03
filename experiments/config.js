@@ -15,9 +15,22 @@ const experimentConfig = {
 
   // Ground truth parameters
   groundTruth: {
+    // Source options: 'auto' | 'noaa' | 'synthetic' | 'custom'
+    // - auto: try NOAA first, then fallback to synthetic
+    // - custom: load from local CSV file (see data/custom-temperatures.csv)
+    source: 'custom',
+
     city: 'New York',
     startDate: '2020-01-01',
     endDate: '2023-12-31',
+    noaaStationId: 'GHCND:USW00094728', // Central Park, NYC
+
+    // Custom CSV settings (used when source === 'custom')
+    customDataFile: 'data/custom-temperatures.csv',
+    dateColumn: 'date',
+    temperatureColumn: 'temperature',
+    temperatureUnit: 'F', // 'F' or 'C'
+
     // Fallback synthetic data if NOAA unavailable
     syntheticRange: { min: 20, max: 90 } // °F
   },
