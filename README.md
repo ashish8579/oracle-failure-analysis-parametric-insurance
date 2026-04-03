@@ -17,6 +17,7 @@ After results are calculated, the returned data will be passed through [Chainlin
 - **Automated Payouts**: Triggered automatically when conditions are met
 - **Extensible Design**: Easy to modify thresholds, data sources, and payout logic
 - **Oracle Failure Research**: Includes comprehensive framework for testing oracle reliability and failure modes
+- **Custom Dataset Mode**: Run experiments against your own CSV dataset (`data/custom-temperatures.csv`)
 
 ## Requirements
 
@@ -139,9 +140,9 @@ After results are calculated, the returned data will be passed through [Chainlin
 
 This repository includes a comprehensive research framework for analyzing how oracle failures affect parametric insurance smart contracts. The framework measures the impact of different failure modes and aggregation strategies on payout correctness.
 
-### Failure Modes Tested
+### Failure Modes Supported
 
-The research framework tests 5 types of oracle failures:
+The research framework supports 5 types of oracle failures:
 
 | Failure Mode | Description | Real-World Example |
 |---|---|---|
@@ -159,25 +160,38 @@ Three aggregation approaches are tested:
 2. **Mean Aggregation**: Average of all valid API responses
 3. **Median Aggregation**: Middle value of sorted responses
 
+### Current Default Experiment Profile
+
+The current repository default is configured for a custom dataset run:
+
+- **Ground truth source**: `custom`
+- **Custom data file**: `data/custom-temperatures.csv`
+- **Current dataset range**: `2024-01-01` to `2024-04-30`
+- **Failure modes enabled**: `F1`
+- **Aggregation strategies**: `single`, `mean`, `median`
+- **Failure probabilities**: `0.0, 0.1, 0.2, 0.3, 0.4, 0.5`
+- **Trials per scenario**: `10`
+- **Total default trials**: `1 × 3 × 6 × 10 = 180`
+
 ### Research Results
 
-#### Test Run Summary (F1 Mode - Data Unavailability)
+#### Latest Run Summary (Custom Dataset, F1 Mode)
 
 - **Total Trials**: 180
-- **False Positive Rate**: 6.11% (incorrectly paid insurance)
-- **False Negative Rate**: 1.67% (failed to pay when should)
-- **Overall Accuracy**: 92.22% (correct decisions)
-- **Correct Payouts**: 166/180 trials
+- **False Positive Rate**: 10.56% (incorrectly paid insurance)
+- **False Negative Rate**: 0.56% (failed to pay when should)
+- **Overall Accuracy**: 88.89% (correct decisions)
+- **Correct Decisions**: 160/180 trials
 
 #### Performance by Aggregation Strategy
 
 | Strategy | False Positive Rate | False Negative Rate | Accuracy |
 |---|---|---|---|
-| Single Oracle | 3.33% | 1.67% | 95.00% |
-| Mean | 11.67% | 0.00% | 88.33% |
-| Median | 3.33% | 3.33% | 93.33% |
+| Single Oracle | 11.67% | 0.00% | 88.33% |
+| Mean | 6.67% | 0.00% | 93.33% |
+| Median | 13.33% | 1.67% | 85.00% |
 
-**Key Finding**: Median aggregation provides balanced performance, while mean aggregation reduces false negatives at the cost of higher false positives.
+**Key Finding (latest run)**: Mean aggregation produced the best accuracy on the current custom dataset.
 
 ### Research Visualizations
 
@@ -204,26 +218,32 @@ npm install
 pip install matplotlib numpy
 ```
 
+On Windows PowerShell (if script execution blocks npm/npx wrappers), use:
+
+```powershell
+npm.cmd install
+```
+
 #### Execute Research Experiments
 
-```bash
-# Run experiments with specified environment variables
-MUMBAI_RPC_URL=http://localhost:8545 \
-PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+```powershell
+# PowerShell example
+$env:MUMBAI_RPC_URL="http://127.0.0.1:8545"
+$env:PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 node experiments/runExperiments.js
 ```
 
 This will:
-- Execute 500 trials per scenario (5 modes × 3 strategies × 6 probabilities = 45,000 trials total)
+- Execute 180 trials with current defaults (`F1 × 3 strategies × 6 probabilities × 10 trials`)
 - Log all trial data to `results/trials-complete.json`
 - Generate aggregate statistics to `results/summary.csv`
 
 #### Analyze Results
 
-```bash
+```powershell
 # Generate summary analysis and graph data
-MUMBAI_RPC_URL=http://localhost:8545 \
-PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+$env:MUMBAI_RPC_URL="http://127.0.0.1:8545"
+$env:PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 node experiments/analyze.js
 ```
 
@@ -283,8 +303,8 @@ Generate Graphs & Reports
 | File | Description |
 |---|---|
 | `results/summary.csv` | Aggregate metrics (false positive/negative rates, accuracy) |
-| `results/trials-complete.json` | Complete log of all 45,000 trials |
-| `results/trials-{F1-F5}.json` | Per-failure-mode trial logs |
+| `results/trials-complete.json` | Complete log of current run trials (180 with default config) |
+| `results/trials-{F*}.json` | Per-failure-mode trial logs for enabled modes |
 | `results/analysis.md` | Summary analysis with key findings |
 | `results/graphs/false_positive_rates.png` | Visualization of false positive rates |
 | `results/graphs/false_negative_rates.png` | Visualization of false negative rates |
@@ -296,10 +316,17 @@ Edit `experiments/config.js` to customize research parameters:
 
 ```javascript
 const experimentConfig = {
-  failureModes: ['F1', 'F2', 'F3', 'F4', 'F5'],     // Which failure modes to test
+   failureModes: ['F1'],                              // Which failure modes to test
   aggregationStrategies: ['single', 'mean', 'median'], // Which aggregators to test
   failureProbabilities: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5], // API failure rates
-  trialsPerScenario: 500,                          // Trials per (mode, strategy, probability)
+   trialsPerScenario: 10,                           // Trials per (mode, strategy, probability)
+   groundTruth: {
+      source: 'custom',
+      customDataFile: 'data/custom-temperatures.csv',
+      dateColumn: 'date',
+      temperatureColumn: 'temperature',
+      temperatureUnit: 'F'
+   },
   contract: {
     coldTempThreshold: 60,                         // °F threshold for cold
     consecutiveColdDaysThreshold: 3                // Days needed for payout
@@ -333,6 +360,20 @@ To add new failure modes:
 2. Update `experiments/config.js` failureModes list
 3. Re-run experiments
 4. Regenerate graphs
+
+### Using Your Own Dataset
+
+1. Edit `data/custom-temperatures.csv`
+2. Keep CSV columns as `date,temperature`
+3. Use `YYYY-MM-DD` date format
+4. Set `temperatureUnit` to `C` in `experiments/config.js` if your data is Celsius
+5. Re-run:
+
+```powershell
+node experiments/runExperiments.js
+node experiments/analyze.js
+python generate_graphs.py
+```
 
 To add new aggregation strategies:
 
